@@ -22,7 +22,7 @@
 
 ### 🤨 常見的錯誤 (Incorrect)
 
-```C#=
+```C#
 // 第一次查詢
 Item workflowProcess = this.newItem("Workflow Process", "get");
 Item workflowProcessActivity = workflowProcess.createRelationship("Workflow Process Activity", "get");
@@ -68,7 +68,7 @@ workflow = workflow.apply();
 :::
 
 
-```C#=
+```C#
 // 一次查詢
 Item workflow = this.newItem("Workflow","get");
 Item workflowProcess = workflow.createRelatedItem("Workflow Process","get");
