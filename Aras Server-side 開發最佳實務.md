@@ -867,19 +867,18 @@ part = part.apply();
 
 ### 說明:
 
-<b style="color:red;">這個存粹是我個人建議，要服務此藥方請確認可以善後!
-~~開發一定有風險，使用技術有好有壞，寫Code前應詳閱API說明書~~ 😉 </b>
-
+```diff
+- **這個存粹是我個人建議，要服務此藥方請確認可以善後!
+~~開發一定有風險，使用技術有好有壞，寫Code前應詳閱API說明書~~** 😉
 
 * Aras背後是使用SOAP的機制，SOAP背後就是XML的內容，所以Aras所有的元件都是透過 .NET Framework的`System.Xml.XmlDocument`來處理XML的內容(IOM中的`setProperty`、`setAttribute`也就是在控制XML)。
 * 而`XmlDocument`已經是舊式的API (.NET 2)，所以在處理大篇幅的XML內容會相對比較慢，所以在處裡上比較沒有*批量* 的處理方式(大多是迴圈一筆一筆讀)，而且非常依賴**XPath**[^xpath]的指令。
 * 所以...如果我在寫外部的元件或是執行檔的話，我會習慣把XML的內容轉成`XDocument`的物件(.NET 4)來如處裡。[^xdocument]
-:::success
-那使用`XDocument`的好處是甚麼?
- 1. 處理上速度相對比較快
- 2. 寫起來比較精簡，可讀性比較高
- 3. 可以搭配LINQ一起使用 👍
-:::
+
+> 那使用`XDocument`的**好處**是甚麼?
+>  1. 處理上速度相對比較快
+>  2. 寫起來比較精簡，可讀性比較高
+>  3. 可以搭配LINQ一起使用 👍
    
 我把`applySQLWithParameter`的範例改用`XmlDocument`來看看
 ```C#
