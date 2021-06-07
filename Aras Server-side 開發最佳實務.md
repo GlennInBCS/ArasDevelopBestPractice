@@ -867,8 +867,8 @@ part = part.apply();
 
 ### 說明:
 
-```diff
-- **這個存粹是我個人建議，要服務此藥方請確認可以善後!
+
+**這個存粹是我個人建議，要服務此藥方請確認可以善後! 
 ~~開發一定有風險，使用技術有好有壞，寫Code前應詳閱API說明書~~** 😉
 
 * Aras背後是使用SOAP的機制，SOAP背後就是XML的內容，所以Aras所有的元件都是透過 .NET Framework的`System.Xml.XmlDocument`來處理XML的內容(IOM中的`setProperty`、`setAttribute`也就是在控制XML)。
