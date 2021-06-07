@@ -774,7 +774,7 @@ Item relatedPart = partBom.createRelatedItem("Part", "get");
 
 ### 🔟 魔術數字(Magic Number):
 
-在 _開發大全([Complete Code]_(https://en.wikipedia.org/wiki/Code_Complete))裡有提到關於**魔術數字** [^magicno] 的議題:
+在 _開發大全_([Complete Code](https://en.wikipedia.org/wiki/Code_Complete))裡有提到關於**魔術數字** [^magicno] 的議題:
 >Avoid "magic numbers" Magic numbers are literal numbers, such as 100 or 47524, that appear in the middle of a program without explanation. If you program in a language that supports named constants, use them instead. If you can't use named constants, use global variables when it's feasible to do so.
 >
 >Avoiding magic numbers yields three advantages:
