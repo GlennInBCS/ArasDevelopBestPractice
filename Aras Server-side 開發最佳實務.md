@@ -16,7 +16,7 @@
 )
 
 ### 說明:
-在查詢物件的時候很常會有需要查詢物件的關聯內容(Relationships)，所以如果已經確定要查詢關聯的話，建議可以在`apply`的時候一起查詢，==盡量不要分開兩次查詢==。
+在查詢物件的時候很常會有需要查詢物件的關聯內容(Relationships)，所以如果已經確定要查詢關聯的話，建議可以在`apply`的時候一起查詢，**盡量不要分開兩次查詢**。
 
 **這邊就用上圖的流程結構為例**
 
@@ -101,13 +101,13 @@ workflow = workflow.apply();
 ### 說明:
 
 我們平常再透過API或是AML查詢Aras的資料的時候，其實很多時候我們都撈了很多**不會**使用到的資料。
-其實從Aras送出要求(Request)到Client端收到回覆(Response)的整段時間，撇除http建立連線的時間(其實也還好)，==**最耗時的就是從DB拉回來的內容轉換成XML的時間**==，所以有目的的減少撈取的資料可以節省不少時間唷~
+其實從Aras送出要求(Request)到Client端收到回覆(Response)的整段時間，撇除http建立連線的時間(其實也還好)，**最耗時的就是從DB拉回來的內容轉換成XML的時間**，所以有目的的減少撈取的資料可以節省不少時間唷~
 
 結論就是，**盡量撈取要使用到的資料就好了**。
 
 ### 🤨 常見的錯誤 (Incorrect)
 * **當我們沒有下select的時候..**
-```xml=
+```xml
 <!-- 查詢的結果 -->
 <SOAP-ENV:Envelope 
   xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
@@ -243,7 +243,7 @@ workflow = workflow.apply();
 ### 😏 建議作法 ( Best Practice)
 
 **加了`select`的時候，很明顯少了很多內容**
-```xml=
+```xml
 <!-- result returned by query with select attribute -->
 <SOAP-ENV:Envelope 
   xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
@@ -261,7 +261,7 @@ workflow = workflow.apply();
 
 * **碰到如果是`Item`類型的欄位，特別關聯的`related_id`欄位，常常都會拉一堆Related物件的欄位回來，所以最好也是指定Related Item的欄位** 
 
-```C#=
+```C#
 Item workflow = this.newItem("Workflow","get");
 // 在Item欄位指定查找的欄位: item_property(property1, property2...)
 workflow.setAttribute("select", "related_id(name)");
@@ -293,7 +293,7 @@ workflow = workflow.apply();
 
 * **也可以搭配`maxRecord`指定查詢的筆數，就類似TSQL的`TOP`語法**
 
-```xml=
+```xml
 //AML Query
 <Item type="Part" action="get" select="item_number, name, unit" maxRecords="100">
 </Item>
@@ -310,7 +310,7 @@ workflow = workflow.apply();
 ### 🤨 常見的錯誤 (Incorrect)
 
 **請看下面第5行**
-```C#=
+```C#
 // 上面蒐集完所有ID~~
 for (int i = 0; i < openWorkflows.Length; i++)
 {
@@ -342,7 +342,7 @@ for (int i = 0; i < openWorkflows.Length; i++)
 **最好的辦法就是一次送出去查完!**
 :::
 
-```C#=
+```C#
 // 上面蒐集完所有ID，組成"逗號"分隔的字串
 string inRange = string.Join(",", openWorkflows)));
 Item getWorkflows = inn.newItem("workflow process", "get");
@@ -371,7 +371,7 @@ getWorkflows = getWorkflows.apply();
 
 ### 🤨 常見的錯誤 (Incorrect)
 
-```C#=
+```C#
 Item configuration = inn.newItem("tmp");
 for (int i=0; i<10; i++)
 {
@@ -390,7 +390,7 @@ Item res = configuration.apply();
 **其實最好就是直接組字串送進`appltAML(string)`裡面去，還可以自己控制apped進去的內容，但這邊我跟原廠寫法不同， ~~原廠寫法很爛，~~ 請用我的方式。**
 
 **【原廠】**
-```C#=
+```C#
 string myAml = "<AML>";
 for (int i=0; i<10; i++)
 {
@@ -408,7 +408,7 @@ Item res = inn.applyAML(myAml);
 👉 **先設定Template再透過`StringBuilder.AppendLine`的方式組字串**
 :::
 
-```C#=
+```C#
 string template = @"
     <Item type='CAD' action='add'>
         <item_number>{0}</item_number>
@@ -439,7 +439,7 @@ Item res = inn.applyAML(aml);
 ### 🤨 沒有`doGetItem`的時候
 
 **【範例】**
-```C#=
+```C#
 
 Innovator inn = this.getInnovator();
 
@@ -457,7 +457,7 @@ return newPart;
 ```
 
 **【結果】**
-```XML=
+```XML
 
 <Item type="Part" typeId="4F1AC04A2B484F3ABA4E20DB63808A88" id="D5CBA439ED61491F9667840B3A255866">
 	<config_id keyed_name="New Part 3" type="Part">D5CBA439ED61491F9667840B3A255866</config_id>
@@ -489,7 +489,7 @@ return newPart;
 ### 😏 有`doGetItem`的時候 (建議作法)
 
 **【範例】**
-```C#=
+```C#
 
 Innovator inn = this.getInnovator();
 
@@ -506,7 +506,7 @@ return newPart;
 
 ```
 **【結果】**
-```XML=
+```XML
 
 <Item type="Part" id="3976B16DF29044CFAE02E2915B2AB05B"/>
 
@@ -526,7 +526,7 @@ return newPart;
 ### 🤨 常見的錯誤 (Incorrect)
 
 在不知道有`returnMode="countOnly"`的情況下，可能是這樣做...
-```C#=
+```C#
 var inn = this.getInnovator(); 
 
 var parts = inn.newItem("Part", "get");
@@ -539,7 +539,7 @@ int count = parts.getItemCount();
 ### 😏 建議作法 ( Best Practice)
 
 **【程式範例】**
-```C#=
+```C#
 Innovator inn = this.getInnovator();
 
 Item parts = inn.newItem("Part", "get");
@@ -561,7 +561,7 @@ return inn.newResult(itemsCount);
 // </Item>
 ```
 **【countOnly查詢的結果】**
-```XML=
+```XML
 <Message>
   <event name="pagemax" value="1"/>
   <event name="itemmax" value="248"/> <!--我們需要回傳的資料量-->
@@ -599,7 +599,7 @@ return inn.newResult(itemsCount);
 
 ### 🤨 盡量不要這樣寫
 
-```C#=
+```C#
 Innovator inn = this.getInnovator();
 string sql = "SELECT * FROM innovator.[PART] WHERE item_number='PART-00001'";
 Item part = inn.applySQL(sql);
@@ -612,7 +612,7 @@ return part;
 
 * 👍 **盡量使用Aras的API/AML來進行CRUD**
 
-```C#=
+```C#
 Item part = this.newItem("Part","get");
 part.setProperty("item_number","PART-00001");
 part = part.apply();
@@ -629,7 +629,7 @@ return part;
 **但是畢竟AML並不像SQL語法這麼彈性，有些情況還是無法達到，那會建議就包成`Store Procedure`來呼叫，達到隔離程式碼與SQL語法的目的**
 :::
 
-```C#=
+```C#
 Item sql = this.newItem("SQL","SQL PROCESS");
 sql.setProperty("name","My SQL Procedure Item");
 sql.setProperty("PROCESS","CALL");
@@ -670,7 +670,7 @@ using(var conn = new SqlConnection("Server=.;Database=XXX;User Id=aaa;Password=1
 ```
 12版終於有這個方法啦~👏
 
-```C#=
+```C#
 
 var inn = this.getInnovator();
 string sql = "select name, id, major_rev from innovator.ITEMTYPE where name = @name";
@@ -722,7 +722,7 @@ return inn.applySQLWithParameters(sql, param);
 
 ### 😏 Attribute Shorthand Functions
 
-```C#=
+```C#
 Innovator inn = this.getInnovator();
 Item part = inn.newItem();
 
@@ -759,7 +759,7 @@ id = part.getID();
 ### 😏 Items Shorthand Functions
 
 
-```C#=
+```C#
 Innovator inn = this.getInnovator();
 Item part = inn.newItem("Part", "get");
 
@@ -798,14 +798,14 @@ Item relatedPart = partBom.createRelatedItem("Part", "get");
 
 **直接來看看範例吧!**
 
-```C#=
+```C#
 //請問這段程式碼代表甚麼意思?
 double total = 1000 * 0.05;
 ```
 
 **如果程式碼是這樣呢?**
 
-```C#=
+```C#
 // 應該大概可以猜得出來再算"總金額"
 const double TAX = 0.05;
 double total = 1000 * TAX;
@@ -821,7 +821,7 @@ double total = 1000 * TAX;
 
 ### 🆖 寫死固定值
 
-```C#=
+```C#
 //我們通常會這樣寫Code
 Item part = inn.newItem("Part", "get");
 part.setID(this.getID());
@@ -829,7 +829,7 @@ part.setAttribute("select", "locked_by_id(keyed_name)");
 part = part.apply();
 ```
 **如果這段程式碼是很多Itemtype都是相同邏輯的話...是不是可以改成通用呢?**
-```C#=
+```C#
 //把取Type改成動態取，不要寫死
 string thisType= this.getType();
 Item part = inn.newItem(thisType, "get");
@@ -882,7 +882,7 @@ part = part.apply();
 
 ### 說明:
 
-:::danger jjAA
+:::danger 
 **這個存粹是我個人建議，要服務此藥方請確認可以善後!**
 ~~開發一定有風險，使用技術有好有壞，寫Code前應詳閱API說明書~~ 😉
 :::
@@ -898,7 +898,7 @@ part = part.apply();
 :::
    
 我把`applySQLWithParameter`的範例改用`XmlDocument`來看看
-```C#=
+```C#
 var inn = this.getInnovator();
 string sql = "select name, id, major_rev from innovator.ITEMTYPE where name = @name";
 
@@ -916,7 +916,7 @@ root.AppendChild(param);
 return inn.applySQLWithParameters(sql, _params.InnerXml);
 ```
 如果是使用`XDocument`呢?
-```C#=
+```C#
 var inn = this.getInnovator();
 string sql = "select name, id, major_rev from innovator.ITEMTYPE where name = @name";
 //必須要引用System.Xml.Linq
