@@ -63,10 +63,7 @@ workflow = workflow.apply();
 
 ### 😏 建議作法 ( Best Practice)
 
-:::    success
-**最好的方式就是直接一次查完!!**
-:::
-
+👉 **最好的方式就是直接一次查完!!**
 
 ```C#
 // 一次查詢
@@ -338,9 +335,8 @@ for (int i = 0; i < openWorkflows.Length; i++)
 
 
 ### 😏 建議作法 ( Best Practice)
-:::success
-**最好的辦法就是一次送出去查完!**
-:::
+
+👉 **最好的辦法就是一次送出去查完!**
 
 ```C#
 // 上面蒐集完所有ID，組成"逗號"分隔的字串
@@ -404,9 +400,8 @@ Item res = inn.applyAML(myAml);
 ```
 
 **【Glenn】**
-:::info
-👉 **先設定Template再透過`StringBuilder.AppendLine`的方式組字串**
-:::
+
+ > 👉 **先設定Template再透過`StringBuilder.AppendLine`的方式組字串**
 
 ```C#
 string template = @"
@@ -511,9 +506,8 @@ return newPart;
 <Item type="Part" id="3976B16DF29044CFAE02E2915B2AB05B"/>
 
 ```
-:::success
+
  🤘 **應該可以很明顯看得出差別了吧!**
-:::
 
 ## 6. 只算數量請用`returnMode="countOnly"` (Use returnMode="countOnly" to Get the Number of Items)
 
@@ -590,7 +584,7 @@ return inn.newResult(itemsCount);
 1. 因為開發人員*不會* 寫SQL語法 
 2. SQL沒寫好很容易就造成效能問題
 3. 程式碼裡面參雜SQL語法不好維護 
-4. SQL容易造成資安問題 (==SQL Injection==)
+4. SQL容易造成資安問題 (**SQL Injection**)
 
 那在Aras裡面呢?
 
@@ -625,9 +619,8 @@ string aml = "<AML><Item type='Part' action='get'><item_number>PART-00001</item_
 Item part = inn.applyAML(aml);
 return part;
 ```
-:::warning
-**但是畢竟AML並不像SQL語法這麼彈性，有些情況還是無法達到，那會建議就包成`Store Procedure`來呼叫，達到隔離程式碼與SQL語法的目的**
-:::
+
+* 👉 **但是畢竟AML並不像SQL語法這麼彈性，有些情況還是無法達到，那會建議就包成`Store Procedure`來呼叫，達到隔離程式碼與SQL語法的目的**
 
 ```C#
 Item sql = this.newItem("SQL","SQL PROCESS");
@@ -637,9 +630,9 @@ Item sql_result = sql.apply();
 return sql_result;
 ```
 * 👉 **使用12SP8版以後新的方法: `applySQLWithParameters`**
-:::danger 
-⛔ **【注意】此方法是Aras 12.0 SP8以後才有的，11.0是沒有的喔!!**
-:::
+
+⛔⛔ <b style="color:red;">【注意】此方法是Aras 12.0 SP8以後才有的，11.0是沒有的喔!!</b>
+
 
 很多企業會要求開發人員在寫SQL語法的時候，`where`條件不可以直接組合前方條件。
 ```C#
@@ -655,7 +648,7 @@ using(var conn = new SqlConnection("Server=.;Database=XXX;User Id=aaa;Password=1
 ```
 通常會要求一定要用`SqlParameter`[^sqlparam]來指派`where`條件內容
 ```C#
-using(var conn = new SqlConnection("Server=.;Database=XXX;User Id=aaa;Password=123"));
+using(var conn = new SqlConnection("Server=.;Database=XXX;User Id=aaa;Password=123"))
 {
       conn.Open();
       //這樣完全不合格，肯定會造成SQL Injection!
@@ -673,9 +666,9 @@ using(var conn = new SqlConnection("Server=.;Database=XXX;User Id=aaa;Password=1
 ```C#
 
 var inn = this.getInnovator();
-string sql = "select name, id, major_rev from innovator.ITEMTYPE where name = @name";
+string sql = "select name, id, major_rev from innovator.ITEMTYPE where name = @searchName";
 
-string param = "<Parameters><Parameter name='name' type='string'>Access</Parameter></Parameters>";
+string param = "<Parameters><Parameter name='searchName' type='string'>Access</Parameter></Parameters>";
 
 //<Parameters>
 //    name就是你設定的參數名稱； type就是Aras的DataType; Parameter就是值
@@ -695,19 +688,16 @@ return inn.applySQLWithParameters(sql, param);
 
 在Aras開發一定會用到IOM裡面的方法`newItem()`,`apply()`,`getPorpeorty`...
 
-:::spoiler 🤔❔ **想想看...有沒有甚麼非不用的理由?或是說好處是甚麼呢?**
-:::info
+🤔❔ **想想看...有沒有甚麼非不用的理由?或是說好處是甚麼呢?**
+
 1. Aras已經公開這個介面了，基本上是不太可能會改變，至少方法名稱是如此
 2. 不會因為Aras版本升級或是換了底層內容而開發人員需要把程式碼翻掉重改
 3. 易讀性比較高，只要是Aras的開發人員一定看得懂
 4. 比起自己動手組AML字串容易許多，不用因為`'(單引號)`, `"(雙引號)`傷透腦筋
 5. 方法可以偵錯(Debuggable)
 6. 不用直接寫SQL語法，也避免掉SQL的資安問題
-:::
 
-:::danger
-不過...有時候Aras沒有在IOM提供API，而開發人員可能會直接去使用其他元件，比如說**Aras.Server.Core**裡面的方法，那就有心理準備未來可能會需要修改程式碼囉~
-:::
+> 不過...有時候Aras沒有在IOM提供API，而開發人員可能會直接去使用其他元件，比如說**Aras.Server.Core**裡面的方法，那就有心理準備未來可能會需要修改程式碼囉~
 
 
 ## 2. 可以多使用快捷方法 (Use Shorthand Functions)
@@ -716,9 +706,6 @@ return inn.applySQLWithParameters(sql, param);
 
 * 甚麼是Shorthand Function?
 * 為什麼要多用Shorthands?
-   * :::spoiler
-     :::
-    
 
 ### 😏 Attribute Shorthand Functions
 
@@ -787,14 +774,15 @@ Item relatedPart = partBom.createRelatedItem("Part", "get");
 
 ### 🔟 魔術數字(Magic Number):
 
-在開發大全([Complete Code](https://en.wikipedia.org/wiki/Code_Complete))裡有提到關於==魔術數字== [^magicno] 的議題:
+在 _開發大全([Complete Code]_(https://en.wikipedia.org/wiki/Code_Complete))裡有提到關於**魔術數字** [^magicno] 的議題:
 >Avoid "magic numbers" Magic numbers are literal numbers, such as 100 or 47524, that appear in the middle of a program without explanation. If you program in a language that supports named constants, use them instead. If you can't use named constants, use global variables when it's feasible to do so.
 >
 >Avoiding magic numbers yields three advantages:
 > * Changes can be made more reliably. If you use named constants, you won't over-look one of the 100s or change a 100 that refers to something else.
 > * Changes can be made more easily. When the maximum number of entries changes from 100 to 200, if you're using magic numbers you have to find all the 100s and change them to 200s. If you use 100+1 or 100-1, you'll also have to find all the 101s and 99s and change them to 201s and 199s. If you're using a named constant, you simply change the definition of the constant from 100 to 200 in one place.
 > * Your code is more readable. Sure, in the expression
-> [name=Code Complete Chapter 2]
+> 
+> _Code Complete Chapter 2_
 
 **直接來看看範例吧!**
 
@@ -811,13 +799,10 @@ const double TAX = 0.05;
 double total = 1000 * TAX;
 ```
 
-:::success
-簡單說就是用讓**其他人**可以**看得懂**的方式來呈現
-如: `double circleArea = r * Math.PI;`
-:::
+👉 簡單說就是用讓**其他人**可以**看得懂**的方式來呈現，如: `double circleArea = r * Math.PI;`
 
 
-[^magicno]: WIKI: https://en.wikipedia.org/wiki/Magic_number_(programming)
+[^magicno]: https://en.wikipedia.org/wiki/Magic_number_(programming)
 
 ### 🆖 寫死固定值
 
@@ -846,19 +831,19 @@ part = part.apply();
 ### 說明:
 
 這個建議是從Aras原廠再另外一篇2017的[文章](https://community.aras.com/b/english/posts/aras-best-practices-community-projects-part-2)，是寫給要貢獻Community Project的開發人員的建議。
-不過各位其實不用太擔心會用到ActiveX，因為ActiveX只存在於**IE**[^active_ie]，其實正確來說只是大部分被用在IE，但其實ActiveX是COM元件[^com]，他的概念就像是那個~~討厭的~~Adobe Flash Player一樣，裝一個程式在瀏覽器底層跑。
+不過各位其實不用太擔心會用到ActiveX，因為ActiveX只存在於**IE** [^active_ie]，其實正確來說只是大部分被用在IE，但其實ActiveX是COM元件[^com]，他的概念就像是那個~~討厭的~~Adobe Flash Player一樣，裝一個程式執行在瀏覽器背後。
 **但是最主要是使用舊版的客戶(9.X, 10.X, 11.X)，特別是9版的客戶可常會用到，現在就是不能用囉~**
 
 
 
-[^active_ie]: [Use ActiveX in IE 11](https://support.microsoft.com/en-us/windows/use-activex-controls-for-internet-explorer-11-25738d05-d357-39b4-eb2f-fdd074bbf347)
-[^com]: [COM(Component Object Model)](https://en.wikipedia.org/wiki/Component_Object_Model)
+[^active_ie]: https://support.microsoft.com/en-us/windows/use-activex-controls-for-internet-explorer-11-25738d05-d357-39b4-eb2f-fdd074bbf347
+[^com]: https://en.wikipedia.org/wiki/Component_Object_Model
 
 ## 2. 抓取遞迴式結構
 
 ### 說明:
 
-在Aras系統中**多階BOM結構**，**多階CAD結構**或是**組織結構**都是屬於遞迴式結構(==自己在找自己==)，身為開發工程師的你會怎麼抓這樣的結構呢?
+在Aras系統中**多階BOM結構**，**多階CAD結構**或是**組織結構**都是屬於遞迴式結構(_自己在找自己_)，身為開發工程師的你會怎麼抓這樣的結構呢?
 1. 寫遞迴方法
 1. 寫CTE的SQL語法
 2. ...
@@ -882,10 +867,9 @@ part = part.apply();
 
 ### 說明:
 
-:::danger 
-**這個存粹是我個人建議，要服務此藥方請確認可以善後!**
-~~開發一定有風險，使用技術有好有壞，寫Code前應詳閱API說明書~~ 😉
-:::
+<b style="color:red;">這個存粹是我個人建議，要服務此藥方請確認可以善後!
+~~開發一定有風險，使用技術有好有壞，寫Code前應詳閱API說明書~~ 😉 </b>
+
 
 * Aras背後是使用SOAP的機制，SOAP背後就是XML的內容，所以Aras所有的元件都是透過 .NET Framework的`System.Xml.XmlDocument`來處理XML的內容(IOM中的`setProperty`、`setAttribute`也就是在控制XML)。
 * 而`XmlDocument`已經是舊式的API (.NET 2)，所以在處理大篇幅的XML內容會相對比較慢，所以在處裡上比較沒有*批量* 的處理方式(大多是迴圈一筆一筆讀)，而且非常依賴**XPath**[^xpath]的指令。
@@ -906,7 +890,7 @@ var _params = inn.newXMLDocument(); //也是可以用new XmlDocument()啦
 var root = _params.CreateElement("Parameters");
 _params.AppendChild(root);
 
-//可能是跑回圈設定一堆條件...
+//可能是跑回圈設定一堆輸入參數...
 var param = _params.CreateElement("Parameter");
 param.SetAttribute("name", "name");
 param.SetAttribute("type", "string");
@@ -922,7 +906,8 @@ string sql = "select name, id, major_rev from innovator.ITEMTYPE where name = @n
 //必須要引用System.Xml.Linq
 var _params = new XDocument("Parameters")
 
-//可能是跑回圈設定一堆條件...
+
+//可能是跑回圈設定一堆輸入參數...
 _params.Root.Add(new XElement("Parameter", 
                               new XAttribute("name", "name"),
                               new XAttribute("type", "string"),
@@ -931,5 +916,5 @@ _params.Root.Add(new XElement("Parameter",
 return inn.applySQLWithParameters(sql, _params.ToString());
 ```
    
-[^xdocument]: [LINQ To XML vs DOM](https://docs.microsoft.com/en-us/dotnet/standard/linq/linq-xml-vs-dom)
-[^xpath]: [W3C School for XPath](https://www.w3school.com.cn/xpath/xpath_syntax.asp)
+[^xdocument]: https://docs.microsoft.com/en-us/dotnet/standard/linq/linq-xml-vs-dom
+[^xpath]: https://www.w3school.com.cn/xpath/xpath_syntax.asp
