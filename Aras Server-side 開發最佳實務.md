@@ -636,7 +636,7 @@ return sql_result;
 
 很多企業會要求開發人員在寫SQL語法的時候，`where`條件不可以直接組合前方條件。
 ```C#
-using(var conn = new SqlConnection("Server=.;Database=XXX;User Id=aaa;Password=123"));
+using(var conn = new SqlConnection("Server=.;Database=XXX;User Id=aaa;Password=123"))
 {
       conn.Open();
       //這樣完全不合格，肯定會造成SQL Injection!
